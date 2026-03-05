@@ -9,6 +9,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Todo API')
     .setDescription('Todo backend for NestJS')
+    .addBearerAuth() // <- добавляет JWT авторизацию
     .setVersion('1.0')
     .build();
 

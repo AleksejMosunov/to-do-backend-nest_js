@@ -46,7 +46,7 @@ export class UsersService {
     return deletedUser;
   }
 
-  findByUsername(username: string): User | undefined {
-    return this.users.find((user) => user.name === username);
+  findByUsername(name: string): User | undefined {
+    return this.users.find((user) => user.name === name);
   }
 }
