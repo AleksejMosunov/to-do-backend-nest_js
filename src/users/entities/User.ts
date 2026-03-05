@@ -4,6 +4,8 @@ interface User {
   email: string;
   password: string;
   role: 'admin' | 'user';
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export default User;

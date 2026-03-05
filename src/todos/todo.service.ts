@@ -1,23 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTodoDto } from 'src/dto/create-todo.dto';
-import { UpdateTodoDto } from 'src/dto/update-todo.dto';
-
-type Todo = {
-  id: number;
-  title: string;
-  completed: boolean;
-  description?: string;
-  status?: 'pending' | 'in-progress' | 'completed';
-  createdAt?: Date;
-  updatedAt?: Date;
-  completedAt?: Date;
-};
+import { CreateTodoDto } from 'src/todos/dto/create-todo.dto';
+import { UpdateTodoDto } from 'src/todos/dto/update-todo.dto';
+import ToDo from './entities/ToDo';
 
 @Injectable()
-export class TodoService {
-  private todos: Todo[] = [];
+export class TodosService {
+  private todos: ToDo[] = [];
 
-  getTodos(): Todo[] {
+  getTodos(): ToDo[] {
     return this.todos;
   }
 
@@ -34,7 +24,7 @@ export class TodoService {
     return newTodo;
   }
 
-  getTodoById(id: number): Todo | undefined {
+  getTodoById(id: number): ToDo | undefined {
     return this.todos.find((todo) => todo.id === id);
   }
 
