@@ -28,6 +28,7 @@ export class TodoService {
       title,
       description,
       completed: false,
+      createdAt: new Date(),
     };
     this.todos.push(newTodo);
     return newTodo;
