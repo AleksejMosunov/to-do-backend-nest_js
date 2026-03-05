@@ -2,66 +2,37 @@ import { Injectable } from '@nestjs/common';
 import { CreateTodoDto } from 'src/todos/dto/create-todo.dto';
 import { UpdateTodoDto } from 'src/todos/dto/update-todo.dto';
 import ToDo from './entities/ToDo';
+import { Todo, TodoDocument } from './schemas/todo.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 
 @Injectable()
 export class TodosService {
-  private todos: ToDo[] = [];
+  constructor(@InjectModel(Todo.name) private todoModel: Model<TodoDocument>) {}
 
-  getTodos(): ToDo[] {
-    return this.todos;
+  async getTodos(): Promise<Todo[]> {
+    return this.todoModel.find().exec();
   }
 
-  createTodo(createTodoDto: CreateTodoDto) {
-    const { title, description } = createTodoDto;
-    const newTodo = {
-      id: this.todos.length + 1,
-      title,
-      description,
-      completed: false,
-      createdAt: new Date(),
-    };
-    this.todos.push(newTodo);
-    return newTodo;
+  async getTodoById(id: number): Promise<Todo | null> {
+    return this.todoModel.findById(id).exec();
   }
 
-  getTodoById(id: number): ToDo | undefined {
-    return this.todos.find((todo) => todo.id === id);
+  async createTodo(createTodoDto: CreateTodoDto): Promise<Todo> {
+    const createdTodo = new this.todoModel(createTodoDto);
+    return createdTodo.save();
   }
 
-  updateTodo(id: number, updateData: UpdateTodoDto) {
-    const todo = this.todos.find((t) => t.id === id);
-    if (!todo) throw new Error('Todo not found');
-
-    Object.assign(todo, updateData); // обновляет только переданные поля
-    todo.updatedAt = new Date();
-    return todo;
-  }
-
-  deleteTodo(id: number): boolean {
-    const index = this.todos.findIndex((todo) => todo.id === id);
-
-    if (index === -1) return false;
-
-    this.todos.splice(index, 1);
-    return true;
-  }
-
-  updateTodoStatus(
+  async updateTodo(
     id: number,
-    status: 'pending' | 'in-progress' | 'completed',
-  ) {
-    const todo = this.todos.find((t) => t.id === id);
-    if (!todo) throw new Error('Todo not found');
+    updateData: UpdateTodoDto,
+  ): Promise<Todo | null> {
+    return this.todoModel
+      .findByIdAndUpdate(id, updateData, { new: true })
+      .exec();
+  }
 
-    todo.status = status;
-    if (status === 'completed') {
-      todo.completed = true;
-      todo.completedAt = new Date();
-    } else {
-      todo.completed = false;
-      todo.completedAt = undefined;
-    }
-    todo.updatedAt = new Date();
-    return todo;
+  async deleteTodo(id: number): Promise<Todo | null> {
+    return this.todoModel.findByIdAndDelete(id).exec();
   }
 }
