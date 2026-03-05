@@ -25,6 +25,13 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+## Features
+- Create, Read, Update, Delete (CRUD) for ToDo items
+- DTOs for create/update operations
+- Validation using `class-validator`
+- Automatic timestamps: `createdAt` and `updatedAt`
+- Optional filtering and pagination
+
 ## Project setup
 
 ```bash
