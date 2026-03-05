@@ -45,4 +45,8 @@ export class UsersService {
     const deletedUser = this.users.splice(index, 1)[0];
     return deletedUser;
   }
+
+  findByUsername(username: string): User | undefined {
+    return this.users.find((user) => user.name === username);
+  }
 }
