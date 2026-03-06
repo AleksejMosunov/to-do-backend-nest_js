@@ -15,4 +15,8 @@ export class CreateTodoDto {
   @IsString()
   @IsNotEmpty()
   description?: string;
+
+  @ApiProperty({ description: 'Author ID of the todo item' })
+  @IsString()
+  authorId: string;
 }

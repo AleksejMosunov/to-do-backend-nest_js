@@ -1,52 +1,46 @@
 import { Injectable } from '@nestjs/common';
-import User from './entities/User';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User, UserDocument } from './schemas/user.schema';
 import { CreateUserDto } from './dto/create.user.dto';
-import { updateUserDto } from './dto/update.user.dto';
+import { UpdateUserDto } from './dto/update.user.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  private users: User[] = [];
+  constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  getUsers(): User[] {
-    return this.users;
+  async createUser(createUserDto: CreateUserDto): Promise<User> {
+    const hashedPassword = await bcrypt.hash(createUserDto.password, 10); // 10 – соль
+    const createdUser = new this.userModel({
+      ...createUserDto,
+      password: hashedPassword,
+    });
+    return createdUser.save();
   }
 
-  createUser(createUserDto: CreateUserDto) {
-    const { name, email, password, role } = createUserDto;
-    const newUser = {
-      id: Date.now(), // простая генерация ID на основе текущего времени
-      name,
-      email,
-      password,
-      role,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.users.push(newUser);
-    return newUser;
+  async getUserById(id: string): Promise<User | null> {
+    return this.userModel.findById(id).exec();
   }
 
-  getUserById(id: number): User | undefined {
-    return this.users.find((user) => user.id === id);
+  async updateUser(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<User | null> {
+    return this.userModel
+      .findByIdAndUpdate(id, updateUserDto, { new: true })
+      .exec();
   }
 
-  updateUser(id: number, updateData: updateUserDto) {
-    const user = this.users.find((u) => u.id === id);
-    if (!user) throw new Error('User not found');
-
-    Object.assign(user, updateData); // обновляет только переданные поля
-    user.updatedAt = new Date();
-    return user;
+  async deleteUser(id: string): Promise<User | null> {
+    return this.userModel.findByIdAndDelete(id).exec();
   }
 
-  deleteUser(id: number): User | null {
-    const index = this.users.findIndex((user) => user.id === id);
-    if (index === -1) return null;
-    const deletedUser = this.users.splice(index, 1)[0];
-    return deletedUser;
+  async getUsers(): Promise<User[]> {
+    return this.userModel.find().exec();
   }
 
-  findByUsername(name: string): User | undefined {
-    return this.users.find((user) => user.name === name);
+  async findByUsername(name: string): Promise<User | null> {
+    return this.userModel.findOne({ name }).exec();
   }
 }

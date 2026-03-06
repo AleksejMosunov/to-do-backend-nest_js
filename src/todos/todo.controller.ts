@@ -3,7 +3,9 @@ import {
   Controller,
   Delete,
   Get,
+  Headers,
   Param,
+  Patch,
   Post,
   Put,
 } from '@nestjs/common';
@@ -17,27 +19,37 @@ export class ToDosController {
   constructor(private readonly todosService: TodosService) {}
 
   @Get()
-  getToDos() {
-    return this.todosService.getTodos();
+  getToDos(@Headers('authorization') token: string) {
+    return this.todosService.getTodos(token);
   }
 
   @Get(':id')
   getToDoById(@Param('id') id: string) {
-    return this.todosService.getTodoById(Number(id));
+    return this.todosService.getTodoById(id);
   }
 
   @Post()
-  createTodo(@Body() body: CreateTodoDto) {
-    return this.todosService.createTodo(body);
+  createTodo(
+    @Body() body: CreateTodoDto,
+    @Headers('authorization') token: string,
+  ) {
+    const decodedToken = this.todosService.decodeToken(token);
+    const authorId = decodedToken.sub;
+    return this.todosService.createTodo(body, authorId);
   }
 
   @Put(':id')
   updateToDo(@Param('id') id: string, @Body() body: UpdateTodoDto) {
-    return this.todosService.updateTodo(Number(id), body);
+    return this.todosService.updateTodo(id, body);
   }
 
   @Delete(':id')
   deleteToDo(@Param('id') id: string) {
-    return this.todosService.deleteTodo(Number(id));
+    return this.todosService.deleteTodo(id); // id как string
+  }
+
+  @Patch(':id/toggle')
+  toggle(@Param('id') id: string) {
+    return this.todosService.toggleTodoStatus(id);
   }
 }

@@ -1,25 +1,18 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
-export class updateUserDto {
-  @ApiProperty({ description: 'Name of the user', required: false })
+export class UpdateUserDto {
+  @ApiPropertyOptional({ description: 'Name of the user' })
   name?: string;
 
-  @ApiProperty({ description: 'Email of the user', required: false })
+  @ApiPropertyOptional({ description: 'Email of the user' })
   email?: string;
 
-  @ApiProperty({ description: 'Password of the user', required: false })
+  @ApiPropertyOptional({ description: 'Password of the user' })
   password?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Role of the user',
-    required: false,
     enum: ['admin', 'user'],
   })
   role?: 'admin' | 'user';
-
-  @ApiProperty({
-    description: 'Date when the user was last updated',
-    required: false,
-  })
-  updatedAt?: Date;
 }

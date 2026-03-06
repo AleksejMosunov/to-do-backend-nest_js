@@ -1,5 +1,5 @@
 interface ToDo {
-  id: number;
+  _id: string;
   title: string;
   description?: string;
   completed: boolean;
@@ -7,6 +7,7 @@ interface ToDo {
   createdAt?: Date;
   updatedAt?: Date;
   completedAt?: Date;
+  authorId?: string;
 }
 
 export default ToDo;

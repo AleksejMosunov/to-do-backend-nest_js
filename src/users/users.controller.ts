@@ -4,39 +4,42 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create.user.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { UpdateUserDto } from './dto/update.user.dto';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  async create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.createUser(createUserDto);
+  }
+
   @Get()
-  getUsers() {
+  async getAll() {
     return this.usersService.getUsers();
   }
 
   @Get(':id')
-  getUserById(@Param('id') id: string) {
-    return this.usersService.getUserById(Number(id));
+  async getById(@Param('id') id: string) {
+    return this.usersService.getUserById(id);
   }
 
-  @Post()
-  createUser(@Body() body: CreateUserDto) {
-    return this.usersService.createUser(body);
-  }
-
-  @Put(':id')
-  updateUser(@Param('id') id: string, @Body() body: CreateUserDto) {
-    return this.usersService.updateUser(Number(id), body);
+  @Patch(':id')
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.updateUser(id, updateUserDto);
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: string) {
-    return this.usersService.deleteUser(Number(id));
+  async remove(@Param('id') id: string) {
+    return this.usersService.deleteUser(id);
   }
 }

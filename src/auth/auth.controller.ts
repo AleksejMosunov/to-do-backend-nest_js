@@ -9,7 +9,7 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 
 @ApiTags('Auth')
-@ApiBearerAuth() // <- показывает поле "Authorize" в Swagger
+@ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
